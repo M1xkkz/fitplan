@@ -1,0 +1,2504 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>FitPlan - วางแผนและฝึกออกกำลังกาย</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #faf9f7;
+      --surface-alt: #f0eee9;
+      --ink: #121212;
+      --muted: #6a6a66;
+      --line: #121212;
+      --line-soft: #e2e0da;
+      --accent: #d81b2c;
+      --accent-soft: #fbe8ea;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0c0c0b;
+        --surface: #171715;
+        --surface-alt: #22221f;
+        --ink: #f5f4f0;
+        --muted: #9c9a94;
+        --line: #f5f4f0;
+        --line-soft: #2b2a26;
+        --accent: #ff3b47;
+        --accent-soft: #381215;
+        --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+        --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0c0c0b;
+      --surface: #171715;
+      --surface-alt: #22221f;
+      --ink: #f5f4f0;
+      --muted: #9c9a94;
+      --line: #f5f4f0;
+      --line-soft: #2b2a26;
+      --accent: #ff3b47;
+      --accent-soft: #381215;
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    :root[data-theme="light"] {
+      --bg: #ffffff;
+      --surface: #faf9f7;
+      --surface-alt: #f0eee9;
+      --ink: #121212;
+      --muted: #6a6a66;
+      --line: #121212;
+      --line-soft: #e2e0da;
+      --accent: #d81b2c;
+      --accent-soft: #fbe8ea;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Prompt', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      padding-top: env(safe-area-inset-top, 0);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    .app {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 16px calc(env(safe-area-inset-bottom, 0px) + 40px);
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 14px;
+      border-bottom: 1px solid var(--line-soft);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: .5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand svg {
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface-alt);
+      padding: 3px;
+      border-radius: 999px;
+    }
+
+    .tab {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 16px;
+      min-height: 36px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all .2s ease;
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+
+    .tab:hover {
+      color: var(--ink);
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-btn {
+      border: 1px solid var(--line-soft);
+      background: var(--surface);
+      color: var(--ink);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all .2s ease;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--ink);
+    }
+
+    .theme-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Warning Banner for file:// */
+    .file-warning-banner {
+      background: var(--surface-alt);
+      border: 1px solid var(--accent);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-top: 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .warning-icon-wrap {
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+    }
+
+    .file-warning-code {
+      display: inline-block;
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* Headings & Icons */
+    .heading-with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .icon-inline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .heading-with-icon .icon-inline {
+      color: var(--ink);
+    }
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin: 0 0 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sub-label {
+      font-size: 11.5px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    /* Cards */
+    .master-panel,
+    .backup-panel,
+    .exercise-item,
+    .add-form,
+    .exercise-card,
+    #workoutDone,
+    .preview-card {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Master Panel */
+    .master-panel {
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+
+    /* Backup & Restore Panel */
+    .backup-panel {
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+
+    .backup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .backup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .backup-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .15s ease;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    .backup-btn:hover {
+      border-color: var(--ink);
+      background: var(--surface-alt);
+    }
+
+    .backup-btn:active {
+      transform: scale(0.98);
+    }
+
+    .backup-btn .btn-icon {
+      display: inline-flex;
+      color: var(--ink);
+    }
+
+    .backup-extra-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line-soft);
+      flex-wrap: wrap;
+    }
+
+    .text-link-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all .15s;
+      touch-action: manipulation;
+    }
+
+    .text-link-btn:hover {
+      color: var(--ink);
+      background: var(--surface-alt);
+    }
+
+    .text-link-btn:active {
+      color: var(--accent);
+    }
+
+    /* Modal Dialog System */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(12px) scale(0.97);
+      transition: transform .2s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .modal-overlay.open .modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close {
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      color: var(--muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all .15s;
+    }
+
+    .modal-close:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-section {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      background: var(--surface);
+    }
+
+    .modal-section-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink);
+    }
+
+    .modal-section-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 12px;
+      line-height: 1.4;
+    }
+
+    .code-textarea {
+      width: 100%;
+      height: 105px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--ink);
+      resize: vertical;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    .code-textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    .modal-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .reset-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: background-color .15s;
+    }
+
+    .reset-btn:hover {
+      background: var(--accent-soft);
+    }
+
+    .master-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: flex-end;
+      margin-top: 10px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .hint {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    input, select {
+      font-family: inherit;
+      font-size: 15px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--ink);
+      transition: border-color .2s;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236a6a66' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Day tabs */
+    .day-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      scroll-snap-type: x mandatory;
+    }
+
+    .day-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .day-tab {
+      scroll-snap-align: start;
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 14px;
+      border: 1px solid var(--line-soft);
+      background: var(--bg);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      touch-action: manipulation;
+    }
+
+    .day-tab:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .day-tab.active {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 600;
+    }
+
+    .today-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .day-tab.active .today-dot {
+      background: var(--bg);
+    }
+
+    /* Schedule List */
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+    }
+
+    .ex-info {
+      font-size: 14px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ex-title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .ex-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      word-break: break-word;
+    }
+
+    .ex-meta {
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 1px 8px;
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+
+    .badge-video {
+      color: var(--ink);
+      border-color: var(--line-soft);
+      background: var(--surface-alt);
+    }
+
+    .badge-icon {
+      display: inline-flex;
+      align-items: center;
+      color: inherit;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .15s;
+      touch-action: manipulation;
+    }
+
+    .icon-btn:hover {
+      color: var(--ink);
+      background: var(--surface-alt);
+      border-color: var(--line-soft);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    .icon-btn.del-btn:hover {
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .empty-note {
+      color: var(--muted);
+      font-size: 13.5px;
+      padding: 24px 16px;
+      text-align: center;
+      border: 1px dashed var(--line-soft);
+      border-radius: var(--radius);
+      background: var(--surface);
+      line-height: 1.6;
+    }
+
+    /* Add Form */
+    .add-form {
+      padding: 16px 18px;
+      margin-bottom: 24px;
+    }
+
+    .cancel-edit-btn {
+      font-size: 12.5px;
+      background: none;
+      border: none;
+      color: var(--accent);
+      text-decoration: underline;
+      padding: 0;
+      cursor: pointer;
+      display: none;
+    }
+
+    .add-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .add-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .primary-btn {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 1px solid var(--ink);
+      border-radius: var(--radius-sm);
+      background: var(--ink);
+      color: var(--bg);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 6px;
+      transition: opacity .15s, transform .1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      touch-action: manipulation;
+    }
+
+    .primary-btn:hover {
+      opacity: .92;
+    }
+
+    .primary-btn:active {
+      transform: scale(.98);
+    }
+
+    .ghost-btn {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 16px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all .15s;
+      touch-action: manipulation;
+    }
+
+    .ghost-btn:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+      background: var(--surface-alt);
+    }
+
+    .ghost-btn:active {
+      transform: scale(.98);
+    }
+
+    /* Workout Preview Accordion (Idle view) */
+    .today-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .today-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .workout-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .preview-hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0;
+      font-weight: 400;
+    }
+
+    #todayPreview {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .preview-card {
+      overflow: hidden;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .preview-card.expanded {
+      border-color: var(--ink);
+    }
+
+    .preview-header {
+      padding: 13px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color .15s;
+      touch-action: manipulation;
+    }
+
+    .preview-header:hover {
+      background: var(--surface-alt);
+    }
+
+    .preview-header:active {
+      background: var(--surface-alt);
+    }
+
+    .preview-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .preview-title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .preview-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      word-break: break-word;
+    }
+
+    .preview-summary {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .preview-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 10px;
+      flex-shrink: 0;
+    }
+
+    .preview-chevron {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .preview-card.expanded .preview-chevron {
+      transform: rotate(180deg);
+      color: var(--ink);
+    }
+
+    /* Accordion Grid Animation */
+    .preview-body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .preview-card.expanded .preview-body {
+      grid-template-rows: 1fr;
+    }
+
+    .preview-content {
+      overflow: hidden;
+      min-height: 0;
+      padding: 0 15px;
+      transition: padding .3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .preview-card.expanded .preview-content {
+      padding: 12px 15px 16px 15px;
+      border-top: 1px dashed var(--line-soft);
+    }
+
+    /* Detail chips */
+    .detail-chips {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .chip {
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+
+    .chip-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .chip-label svg {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .chip-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* Video Embed */
+    .video-section {
+      margin-top: 8px;
+    }
+
+    .video-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .video-label svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #000;
+      border: 1px solid var(--line-soft);
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .video-actions {
+      margin-top: 8px;
+      display: flex;
+    }
+
+    .yt-fallback-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 10px 14px;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-soft);
+      background: var(--bg);
+      transition: all .15s;
+      touch-action: manipulation;
+    }
+
+    .yt-fallback-btn svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .yt-fallback-btn:hover {
+      border-color: var(--accent);
+      background: var(--surface-alt);
+    }
+
+    .yt-fallback-btn:active {
+      transform: scale(0.98);
+    }
+
+    .no-video-note {
+      font-size: 12.5px;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px dashed var(--line-soft);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Active Workout Phase */
+    .progress {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .exercise-card {
+      text-align: center;
+      padding: 22px 18px;
+    }
+
+    #exName {
+      font-size: 22px;
+      margin: 0 0 4px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    #setLabel {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0 0 14px;
+    }
+
+    .body-diagram {
+      width: 125px;
+      max-width: 50vw;
+      margin: 4px auto 8px;
+      display: block;
+    }
+
+    .zone {
+      fill: var(--line-soft);
+      transition: fill .3s;
+    }
+
+    .zone.active {
+      fill: var(--accent);
+      animation: pulse 1.15s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .45; }
+    }
+
+    .muscle-label {
+      font-size: 13.5px;
+      color: var(--accent);
+      font-weight: 600;
+      margin: 4px 0 16px;
+    }
+
+    .run-video-toggle {
+      background: none;
+      border: 1px solid var(--line-soft);
+      color: var(--muted);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      min-height: 38px;
+      font-size: 12.5px;
+      margin: 0 auto 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all .15s;
+      touch-action: manipulation;
+    }
+
+    .run-video-toggle:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .run-video-toggle:active {
+      transform: scale(0.96);
+    }
+
+    .run-video-drawer {
+      display: none;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .run-video-drawer.open {
+      display: block;
+    }
+
+    /* Rest Overlay */
+    .rest-overlay {
+      text-align: center;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 36px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    #restTitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0 0 8px;
+      font-weight: 500;
+    }
+
+    .countdown {
+      font-size: 72px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 16px;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    /* Done screen */
+    #workoutDone {
+      text-align: center;
+      padding: 38px 20px;
+    }
+
+    .done-icon-wrap {
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #workoutDone h2 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(25px);
+      background: var(--ink);
+      color: var(--bg);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+      max-width: 90vw;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-icon {
+      display: inline-flex;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Views visibility */
+    .view {
+      display: none;
+      padding-top: 18px;
+      animation: fadeIn .2s ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Mobile Breakpoints */
+    @media (max-width: 600px) {
+      input, select {
+        font-size: 16px; /* Prevents auto-zoom in iOS Safari */
+      }
+      .app {
+        padding: 0 12px calc(env(safe-area-inset-bottom, 0px) + 32px);
+      }
+      .master-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .master-grid button {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand {
+        font-size: 18px;
+      }
+      .tab {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+      .detail-chips {
+        grid-template-columns: 1fr 1fr;
+      }
+      .add-grid {
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="brand">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12" />
+        </svg>
+        FIT<span>PLAN</span>
+      </div>
+      <div class="nav-actions">
+        <nav class="tabs">
+          <button class="tab active" data-tab="schedule">ตาราง</button>
+          <button class="tab" data-tab="workout">ออกกำลังกาย</button>
+        </nav>
+        <button class="theme-btn" id="themeToggle" title="สลับโหมดมืด/สว่าง" aria-label="Toggle Theme">
+          <span id="themeIcon"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Advisory Banner when opened via file:// -->
+    <div id="fileWarningBanner" class="file-warning-banner" style="display:none">
+      <div class="warning-icon-wrap" id="warningIconWrap"></div>
+      <div>
+        <strong>กำลังเปิดแบบไฟล์ตรง (file://)</strong><br>
+        นโยบายความปลอดภัยใหม่ของ YouTube จะบล็อกการเล่นคลิปบนหน้าเว็บสำหรับไฟล์ <code>file://</code> (ขึ้น Error 153)<br>
+        <span style="font-weight:600">วิธีเปิดให้เล่นคลิปบนเว็บได้ 100%:</span> ให้ดับเบิ้ลคลิกไฟล์ <span class="file-warning-code">เปิดใช้งานเว็บ.bat</span> ในโฟลเดอร์นี้ หรือกดปุ่ม <em>"เปิดดูคลิปใน YouTube"</em> ใต้วิดีโอแต่ละท่า
+      </div>
+    </div>
+
+    <main>
+      <!-- View 1: Schedule -->
+      <section id="view-schedule" class="view active">
+        <div class="master-panel">
+          <h3>
+            <span class="heading-with-icon">
+              <span class="icon-inline" id="iconSettings"></span>
+              เวลาพักมาตรฐานกลาง
+            </span>
+            <span class="sub-label">(ใช้เมื่อไม่ได้ระบุแยกในแต่ละท่า)</span>
+          </h3>
+          <div class="master-grid">
+            <label>พักระหว่างเซ็ท (วินาที)
+              <input type="number" id="masterRestSet" min="0" placeholder="60">
+            </label>
+            <label>พักตอนเปลี่ยนท่า (วินาที)
+              <input type="number" id="masterRestEx" min="0" placeholder="90">
+            </label>
+            <button id="saveMaster" class="ghost-btn">บันทึกค่ากลาง</button>
+          </div>
+        </div>
+
+        <div class="backup-panel">
+          <div class="backup-header">
+            <span class="heading-with-icon">
+              <span class="icon-inline" id="iconBackup"></span>
+              สำรองและกู้คืนตาราง
+            </span>
+            <span class="sub-label">ย้ายข้อมูลไปมือถือ หรือบันทึกเก็บไว้</span>
+          </div>
+          <div class="backup-grid">
+            <button type="button" class="backup-btn" id="exportBtn" title="ดาวน์โหลดไฟล์สำรองตาราง (.json)">
+              <span class="btn-icon" id="iconExport"></span>
+              <span>สำรองข้อมูล (Export)</span>
+            </button>
+            <button type="button" class="backup-btn" id="importBtn" title="นำเข้าไฟล์สำรองตาราง (.json)">
+              <span class="btn-icon" id="iconImport"></span>
+              <span>กู้คืนข้อมูล (Restore)</span>
+            </button>
+            <input type="file" id="importFileInput" accept=".json,application/json" style="display:none">
+          </div>
+          <div class="backup-extra-actions">
+            <button type="button" class="text-link-btn" id="copyJsonBtn" title="คัดลอกโค้ดตารางสำหรับส่งในแชท">
+              <span class="btn-icon" id="iconCopy"></span>
+              คัดลอกโค้ดตาราง (ส่งผ่าน LINE)
+            </button>
+            <span style="color:var(--line-soft)">•</span>
+            <button type="button" class="text-link-btn" id="pasteJsonBtn" title="วางโค้ดตารางที่คัดลอกมา">
+              <span class="btn-icon" id="iconPaste"></span>
+              วางโค้ดตาราง
+            </button>
+          </div>
+        </div>
+
+        <div class="day-tabs" id="dayTabs"></div>
+        <div class="exercise-list" id="exerciseList"></div>
+
+        <form class="add-form" id="addForm">
+          <h3 id="formTitle">
+            <span class="heading-with-icon">
+              <span class="icon-inline" id="iconForm"></span>
+              <span id="formTitleText">เพิ่มท่าออกกำลังกาย</span>
+            </span>
+            <button type="button" id="cancelEditBtn" class="cancel-edit-btn">ยกเลิกแก้ไข</button>
+          </h3>
+          <div class="add-grid">
+            <label class="full">เลือกจากท่าแนะนำ
+              <select id="presetSelect"></select>
+            </label>
+            <label class="full">ชื่อท่าออกกำลังกาย
+              <input id="customName" placeholder="เช่น Chest Press, Dumbbell Press" required>
+            </label>
+            <label class="full">กล้ามเนื้อมัดหลัก
+              <select id="muscleSelect"></select>
+            </label>
+            <label>จำนวนเซ็ท
+              <input type="number" id="setsInput" value="3" min="1" required>
+            </label>
+            <label>จำนวนครั้ง/เซ็ท
+              <input type="number" id="repsInput" value="12" min="1" required>
+            </label>
+            <label>พักระหว่างเซ็ท (วินาที)
+              <input type="number" id="restSetInput" placeholder="เว้นว่าง = ค่ากลาง">
+            </label>
+            <label>พักเปลี่ยนท่า (วินาที)
+              <input type="number" id="restExInput" placeholder="เว้นว่าง = ค่ากลาง">
+            </label>
+            <label class="full">ลิงก์คลิปวิธีทำ (YouTube URL)
+              <input type="url" id="videoUrlInput" placeholder="เช่น https://www.youtube.com/watch?v=... หรือ https://youtu.be/...">
+              <span class="hint">
+                <span class="icon-inline" id="iconInfoHint"></span>
+                ระบบจะเล่นวิดีโอสาธิตบนหน้าเว็บโดยตรง ไม่เด้งเปิดแอป YouTube
+              </span>
+            </label>
+            <button type="submit" class="primary-btn full" id="submitBtn">
+              <span class="icon-inline" id="iconSubmitBtn"></span>
+              <span id="submitBtnText">เพิ่มลงตาราง</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- View 2: Workout -->
+      <section id="view-workout" class="view">
+        <!-- 2.1 Idle Phase -->
+        <div id="workoutIdle">
+          <div class="today-header">
+            <p class="today-label" id="todayLabel"></p>
+            <span class="sub-label">เลือกวันเพื่อเริ่มหรือดูตาราง</span>
+          </div>
+          <div class="day-tabs" id="workoutDayTabs"></div>
+
+          <div class="workout-preview-header">
+            <h3 style="margin:0" class="heading-with-icon">
+              <span class="icon-inline" id="iconList"></span>
+              รายการท่าวันนี้
+            </h3>
+            <span class="preview-hint">แตะแต่ละท่าเพื่อดูคลิปสอนและวิธีทำ</span>
+          </div>
+          <div id="todayPreview"></div>
+          <button class="primary-btn" id="startBtn">เริ่มออกกำลังกาย</button>
+        </div>
+
+        <!-- 2.2 Active Routine Phase -->
+        <div id="workoutRun" hidden>
+          <div class="progress" id="progressLabel"></div>
+          <div class="exercise-card" id="exerciseCard">
+            <h2 id="exName"></h2>
+            <p id="setLabel"></p>
+
+            <svg class="body-diagram" viewBox="0 0 160 300" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="80" cy="26" r="18" fill="var(--line-soft)" />
+              <rect data-muscle="shoulders" class="zone" x="33" y="50" width="20" height="34" rx="6" />
+              <rect data-muscle="shoulders" class="zone" x="107" y="50" width="20" height="34" rx="6" />
+              <rect data-muscle="chest" class="zone" x="54" y="50" width="52" height="52" rx="8" />
+              <rect data-muscle="abs" class="zone" x="57" y="106" width="46" height="52" rx="8" />
+              <rect data-muscle="arms" class="zone" x="16" y="56" width="16" height="86" rx="7" />
+              <rect data-muscle="arms" class="zone" x="128" y="56" width="16" height="86" rx="7" />
+              <rect data-muscle="back" class="zone" x="6" y="56" width="7" height="86" rx="4" />
+              <rect data-muscle="back" class="zone" x="147" y="56" width="7" height="86" rx="4" />
+              <rect data-muscle="glutes" class="zone" x="55" y="162" width="22" height="30" rx="6" />
+              <rect data-muscle="glutes" class="zone" x="83" y="162" width="22" height="30" rx="6" />
+              <rect data-muscle="legs" class="zone" x="53" y="196" width="24" height="88" rx="9" />
+              <rect data-muscle="legs" class="zone" x="83" y="196" width="24" height="88" rx="9" />
+            </svg>
+
+            <p class="muscle-label" id="muscleLabel"></p>
+
+            <!-- Toggle video during workout -->
+            <div id="runVideoContainer">
+              <button type="button" class="run-video-toggle" id="runVideoToggle">
+                <span class="icon-inline" id="runVideoToggleIcon"></span>
+                <span id="runVideoToggleText">ดูคลิปวิธีทำท่านี้</span>
+              </button>
+              <div class="run-video-drawer" id="runVideoDrawer">
+                <div class="video-container" id="runVideoWrapper"></div>
+                <div class="video-actions" id="runVideoActions"></div>
+              </div>
+            </div>
+
+            <button class="primary-btn" id="completeSetBtn">เสร็จเซ็ทนี้</button>
+          </div>
+
+          <!-- 2.3 Rest Overlay -->
+          <div class="rest-overlay" id="restOverlay" hidden>
+            <p id="restTitle"></p>
+            <div class="countdown" id="countdownNum"></div>
+            <button class="ghost-btn" id="skipRestBtn">ข้ามการพัก</button>
+          </div>
+
+          <button class="ghost-btn" id="stopBtn" style="margin-top:14px">หยุดออกกำลังกาย</button>
+        </div>
+
+        <!-- 2.4 Finished Phase -->
+        <div id="workoutDone" hidden>
+          <div class="done-icon-wrap" id="doneTrophyIcon"></div>
+          <h2>ยอดเยี่ยมมาก! เสร็จสิ้นแล้ว</h2>
+          <p id="doneSummary" style="color:var(--muted);font-size:14px;margin-bottom:20px"></p>
+          <button class="primary-btn" id="restartBtn">กลับหน้าหลัก</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Backup & Restore Modal -->
+    <div class="modal-overlay" id="backupModal" role="dialog" aria-modal="true" aria-labelledby="modalBackupTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="modalBackupTitle">
+            <span class="icon-inline" id="iconModalHeader"></span>
+            สำรองและกู้คืนข้อมูลตาราง
+          </h3>
+          <button type="button" class="modal-close" id="closeBackupModalBtn" title="ปิดหน้าต่าง">
+            <span class="icon-inline" id="iconModalClose"></span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Section 1: File based -->
+          <div class="modal-section">
+            <div class="modal-section-title">
+              <span class="icon-inline" id="iconModalFile"></span>
+              วิธีที่ 1: จัดการด้วยไฟล์สำรอง (.json)
+            </div>
+            <p class="modal-section-desc">
+              ดาวน์โหลดไฟล์เก็บไว้ในคอม/มือถือ หรือนำเข้าไฟล์ .json ที่เคยบันทึกไว้
+            </p>
+            <div class="modal-btn-row">
+              <button type="button" class="backup-btn" id="modalExportBtn" style="flex:1">
+                <span class="btn-icon" id="iconModalExport"></span>
+                <span>ดาวน์โหลดไฟล์สำรอง</span>
+              </button>
+              <button type="button" class="backup-btn" id="modalImportFileBtn" style="flex:1">
+                <span class="btn-icon" id="iconModalImport"></span>
+                <span>เลือกไฟล์เพื่อกู้คืน</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 2: Text Code based -->
+          <div class="modal-section">
+            <div class="modal-section-title">
+              <span class="icon-inline" id="iconModalText"></span>
+              วิธีที่ 2: กู้คืนด้วยข้อความโค้ด (เหมาะสำหรับส่งต่อใน LINE)
+            </div>
+            <p class="modal-section-desc">
+              คัดลอกข้อความโค้ดตารางมาวางที่นี่ หรือกด "วางจากคลิปบอร์ด" เพื่อกู้คืนได้ทันที
+            </p>
+            <textarea class="code-textarea" id="modalCodeTextarea" placeholder="วางข้อความโค้ดตาราง (JSON) ที่นี่..."></textarea>
+            <div class="modal-btn-row">
+              <button type="button" class="ghost-btn" id="modalPasteClipboardBtn" style="flex:1;min-height:42px">
+                <span class="icon-inline" id="iconModalPaste"></span>
+                <span>วางจากคลิปบอร์ด</span>
+              </button>
+              <button type="button" class="primary-btn" id="modalApplyCodeBtn" style="flex:1;min-height:42px;margin-top:0">
+                <span class="icon-inline" id="iconModalCheck"></span>
+                <span>กู้คืนตารางทันที</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="reset-btn" id="modalResetDefaultBtn" title="คืนค่าตารางเริ่มต้น">
+            <span class="icon-inline" id="iconModalReset"></span>
+            <span>คืนค่าตารางเริ่มต้น</span>
+          </button>
+          <button type="button" class="ghost-btn" id="modalDoneBtn" style="width:auto;min-height:36px;padding:6px 18px">
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---- SVG Icon System (No Emojis) ----
+    const ICONS = {
+      sun: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+      moon: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+      settings: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+      plus: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+      edit: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+      trash: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+      play: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+      close: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+      target: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+      clock: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      repeat: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+      hash: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`,
+      youtube: `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>`,
+      info: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+      list: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+      trophy: `<svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`,
+      check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+      download: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+      upload: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
+      database: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+      copy: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+      paste: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`,
+      refresh: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`
+    };
+
+    // Inject static SVG icons
+    document.getElementById('iconSettings').innerHTML = ICONS.settings;
+    document.getElementById('iconBackup').innerHTML = ICONS.database;
+    document.getElementById('iconExport').innerHTML = ICONS.download;
+    document.getElementById('iconImport').innerHTML = ICONS.upload;
+    document.getElementById('iconCopy').innerHTML = ICONS.copy;
+    document.getElementById('iconPaste').innerHTML = ICONS.paste;
+    document.getElementById('iconForm').innerHTML = ICONS.plus;
+    document.getElementById('iconInfoHint').innerHTML = ICONS.info;
+    document.getElementById('iconSubmitBtn').innerHTML = ICONS.plus;
+    document.getElementById('iconList').innerHTML = ICONS.list;
+    document.getElementById('warningIconWrap').innerHTML = ICONS.info;
+    document.getElementById('doneTrophyIcon').innerHTML = ICONS.trophy;
+
+    // Modal SVG icons
+    document.getElementById('iconModalHeader').innerHTML = ICONS.database;
+    document.getElementById('iconModalClose').innerHTML = ICONS.close;
+    document.getElementById('iconModalFile').innerHTML = ICONS.download;
+    document.getElementById('iconModalExport').innerHTML = ICONS.download;
+    document.getElementById('iconModalImport').innerHTML = ICONS.upload;
+    document.getElementById('iconModalText').innerHTML = ICONS.copy;
+    document.getElementById('iconModalPaste').innerHTML = ICONS.paste;
+    document.getElementById('iconModalCheck').innerHTML = ICONS.check;
+    document.getElementById('iconModalReset').innerHTML = ICONS.refresh;
+
+    const DAY_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const DAY_LABEL = { mon: 'จันทร์', tue: 'อังคาร', wed: 'พุธ', thu: 'พฤหัสบดี', fri: 'ศุกร์', sat: 'เสาร์', sun: 'อาทิตย์' };
+    const MUSCLE_LABEL = { chest: 'หน้าอก', shoulders: 'ไหล่', back: 'หลัง', arms: 'แขน', abs: 'หน้าท้อง', legs: 'ขา', glutes: 'สะโพก' };
+
+    const PRESETS = [
+      { name: 'Chest Press', muscle: 'chest', videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg' },
+      { name: 'Pec Deck Fly', muscle: 'chest', videoUrl: 'https://www.youtube.com/watch?v=eGjt4lk6g34' },
+      { name: 'Dumbbell Press', muscle: 'chest', videoUrl: 'https://www.youtube.com/watch?v=VmB1G1K7v94' },
+      { name: 'Shoulder Press', muscle: 'shoulders', videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI' },
+      { name: 'Lateral Raise', muscle: 'shoulders', videoUrl: 'https://www.youtube.com/watch?v=3VcKaXpzqRo' },
+      { name: 'Lat Pulldown', muscle: 'back', videoUrl: 'https://www.youtube.com/watch?v=CAwf7n6Luuc' },
+      { name: 'Seated Cable Row', muscle: 'back', videoUrl: 'https://www.youtube.com/watch?v=GZbfZ033f74' },
+      { name: 'Bicep Curl', muscle: 'arms', videoUrl: 'https://www.youtube.com/watch?v=ykJmrZ5v0Oo' },
+      { name: 'Tricep Pushdown', muscle: 'arms', videoUrl: 'https://www.youtube.com/watch?v=2-LAMcpzODU' },
+      { name: 'Barbell Squat', muscle: 'legs', videoUrl: 'https://www.youtube.com/watch?v=aclHkVaku9U' },
+      { name: 'Leg Press', muscle: 'legs', videoUrl: 'https://www.youtube.com/watch?v=IZxyjW7MPJQ' },
+      { name: 'Leg Extension', muscle: 'legs', videoUrl: 'https://www.youtube.com/watch?v=YyvSfV-77y4' },
+      { name: 'Leg Curl', muscle: 'legs', videoUrl: 'https://www.youtube.com/watch?v=1Tq3QdYUuHs' },
+      { name: 'Plank', muscle: 'abs', videoUrl: 'https://www.youtube.com/watch?v=pSHjTRCQxIw' },
+      { name: 'Crunch', muscle: 'abs', videoUrl: 'https://www.youtube.com/watch?v=5ER58dZ245E' },
+      { name: 'Hip Thrust', muscle: 'glutes', videoUrl: 'https://www.youtube.com/watch?v=xDmFkJxPzeM' }
+    ];
+
+    const STORE_KEY = 'fitplan_v2';
+
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const str = url.trim();
+      if (/^[a-zA-Z0-9_-]{11}$/.test(str)) return str;
+      const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+      const match = str.match(regExp);
+      return match ? match[1] : null;
+    }
+
+    function getYouTubeEmbedUrl(url) {
+      const id = extractYouTubeId(url);
+      if (!id) return null;
+      return `https://www.youtube.com/embed/${id}?enablejsapi=1&rel=0&playsinline=1`;
+    }
+
+    function defaultMonRoutine() {
+      return [
+        { id: 1, name: 'Chest Press', muscle: 'chest', sets: 3, reps: 12, restSet: 60, restEx: 90, videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg' },
+        { id: 2, name: 'Pec Deck Fly', muscle: 'chest', sets: 3, reps: 12, restSet: 60, restEx: 90, videoUrl: 'https://www.youtube.com/watch?v=eGjt4lk6g34' },
+        { id: 3, name: 'Dumbbell Press', muscle: 'chest', sets: 3, reps: 12, restSet: 60, restEx: 90, videoUrl: 'https://www.youtube.com/watch?v=VmB1G1K7v94' }
+      ];
+    }
+
+    function defaultState() {
+      const days = {};
+      DAY_ORDER.forEach(d => days[d] = []);
+      days['mon'] = defaultMonRoutine();
+      return { master: { restSet: 60, restEx: 90 }, days };
+    }
+
+    function load() {
+      try {
+        let raw = localStorage.getItem(STORE_KEY);
+        if (!raw) raw = localStorage.getItem('fitplan_v1');
+        if (!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        if (!parsed.master || !parsed.days) return defaultState();
+        DAY_ORDER.forEach(d => { if (!parsed.days[d]) parsed.days[d] = []; });
+        if (parsed.days['mon'].length === 0) {
+          parsed.days['mon'] = defaultMonRoutine();
+        }
+        return parsed;
+      } catch (e) {
+        return defaultState();
+      }
+    }
+
+    function save() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { }
+    }
+
+    let state = load();
+    const todayKey = DAY_ORDER[(new Date().getDay() + 6) % 7];
+    let selectedDay = todayKey;
+    let selectedWorkoutDay = todayKey;
+    let editingExerciseId = null;
+    let expandedPreviewIds = new Set();
+
+    // Check if opened via file:// protocol
+    if (window.location.protocol === 'file:') {
+      const banner = document.getElementById('fileWarningBanner');
+      if (banner) banner.style.display = 'flex';
+    }
+
+    // Modern Toast Notification for mobile ergonomics
+    function showToast(msg) {
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span class="toast-icon">${ICONS.check}</span><span>${msg}</span>`;
+      toast.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    // ---- Theme toggle ----
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIconSpan = document.getElementById('themeIcon');
+    const savedTheme = localStorage.getItem('fitplan_theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      updateThemeIcon(prefersDark ? 'dark' : 'light');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const next = isDark ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('fitplan_theme', next);
+      updateThemeIcon(next);
+    });
+
+    function updateThemeIcon(t) {
+      themeIconSpan.innerHTML = t === 'dark' ? ICONS.sun : ICONS.moon;
+    }
+
+    // ---- Tabs ----
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'workout') renderWorkoutIdle();
+      });
+    });
+
+    // ---- Schedule View ----
+    function renderMaster() {
+      document.getElementById('masterRestSet').value = state.master.restSet;
+      document.getElementById('masterRestEx').value = state.master.restEx;
+    }
+
+    document.getElementById('saveMaster').addEventListener('click', () => {
+      const setVal = parseInt(document.getElementById('masterRestSet').value);
+      const exVal = parseInt(document.getElementById('masterRestEx').value);
+      state.master.restSet = isNaN(setVal) ? 60 : Math.max(0, setVal);
+      state.master.restEx = isNaN(exVal) ? 90 : Math.max(0, exVal);
+      save();
+      renderExerciseList();
+      if (document.getElementById('view-workout').classList.contains('active')) renderWorkoutIdle();
+      showToast('บันทึกค่าเวลาพักมาตรฐานกลางเรียบร้อย');
+    });
+
+    function renderDayTabs() {
+      const wrap = document.getElementById('dayTabs'); wrap.innerHTML = '';
+      DAY_ORDER.forEach(d => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'day-tab' + (d === selectedDay ? ' active' : '');
+        b.innerHTML = `<span>${DAY_LABEL[d]}</span>${d === todayKey ? '<span class="today-dot" title="วันนี้"></span>' : ''}`;
+        b.addEventListener('click', () => {
+          selectedDay = d;
+          resetAddForm();
+          renderDayTabs();
+          renderExerciseList();
+        });
+        wrap.appendChild(b);
+      });
+    }
+
+    function renderExerciseList() {
+      const wrap = document.getElementById('exerciseList'); wrap.innerHTML = '';
+      const list = state.days[selectedDay] || [];
+      if (!list.length) {
+        wrap.innerHTML = `<div class="empty-note">ยังไม่มีท่าออกกำลังกายสำหรับวัน${DAY_LABEL[selectedDay]}<br><span style="font-size:12px;color:var(--muted)">เพิ่มท่าใหม่ด้านล่างได้เลย</span></div>`;
+        return;
+      }
+
+      list.forEach(ex => {
+        const row = document.createElement('div'); row.className = 'exercise-item';
+        const restSet = ex.restSet ?? state.master.restSet;
+        const restEx = ex.restEx ?? state.master.restEx;
+        const hasVideo = !!extractYouTubeId(ex.videoUrl);
+
+        row.innerHTML = `
+          <div class="ex-info">
+            <div class="ex-title-row">
+              <span class="badge">${MUSCLE_LABEL[ex.muscle] || ex.muscle}</span>
+              <span class="ex-name">${escapeHtml(ex.name)}</span>
+              ${hasVideo ? `<span class="badge badge-video" title="มีคลิปวิดีโอสอน"><span class="badge-icon">${ICONS.play}</span> มีคลิปสอน</span>` : ''}
+            </div>
+            <div class="ex-meta">
+              ${ex.sets} เซ็ท × ${ex.reps} ครั้ง • พักเซ็ท ${restSet}วิ • พักเปลี่ยนท่า ${restEx}วิ
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="icon-btn edit-btn" title="แก้ไขท่านี้" aria-label="Edit">
+              ${ICONS.edit}
+            </button>
+            <button class="icon-btn del-btn" title="ลบท่านี้" aria-label="Delete">
+              ${ICONS.trash}
+            </button>
+          </div>
+        `;
+
+        row.querySelector('.edit-btn').addEventListener('click', () => {
+          loadExerciseIntoForm(ex);
+        });
+
+        row.querySelector('.del-btn').addEventListener('click', () => {
+          if (confirm(`ต้องการลบท่า "${ex.name}" ใช่หรือไม่?`)) {
+            state.days[selectedDay] = state.days[selectedDay].filter(e => e.id !== ex.id);
+            save();
+            if (editingExerciseId === ex.id) resetAddForm();
+            renderExerciseList();
+            showToast('ลบท่าออกกำลังกายแล้ว');
+          }
+        });
+
+        wrap.appendChild(row);
+      });
+    }
+
+    function loadExerciseIntoForm(ex) {
+      editingExerciseId = ex.id;
+      document.getElementById('customName').value = ex.name;
+      document.getElementById('muscleSelect').value = ex.muscle;
+      document.getElementById('setsInput').value = ex.sets;
+      document.getElementById('repsInput').value = ex.reps;
+      document.getElementById('restSetInput').value = ex.restSet !== null && ex.restSet !== undefined ? ex.restSet : '';
+      document.getElementById('restExInput').value = ex.restEx !== null && ex.restEx !== undefined ? ex.restEx : '';
+      document.getElementById('videoUrlInput').value = ex.videoUrl || '';
+
+      document.getElementById('presetSelect').value = 'custom';
+      document.getElementById('iconForm').innerHTML = ICONS.edit;
+      document.getElementById('formTitleText').textContent = `แก้ไขท่า: ${ex.name}`;
+      document.getElementById('cancelEditBtn').style.display = 'inline-block';
+      document.getElementById('iconSubmitBtn').innerHTML = ICONS.check;
+      document.getElementById('submitBtnText').textContent = 'บันทึกการแก้ไข';
+
+      document.getElementById('addForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetAddForm() {
+      editingExerciseId = null;
+      document.getElementById('addForm').reset();
+      document.getElementById('presetSelect').value = 'custom';
+      document.getElementById('setsInput').value = 3;
+      document.getElementById('repsInput').value = 12;
+      document.getElementById('iconForm').innerHTML = ICONS.plus;
+      document.getElementById('formTitleText').textContent = 'เพิ่มท่าออกกำลังกาย';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      document.getElementById('iconSubmitBtn').innerHTML = ICONS.plus;
+      document.getElementById('submitBtnText').textContent = 'เพิ่มลงตาราง';
+    }
+
+    document.getElementById('cancelEditBtn').addEventListener('click', resetAddForm);
+
+    function initAddForm() {
+      const presetSel = document.getElementById('presetSelect');
+      presetSel.innerHTML = '<option value="custom">-- เลือกท่าแนะนำ หรือพิมพ์ตั้งเอง --</option>'
+        + PRESETS.map((p, i) => `<option value="${i}">${p.name} (${MUSCLE_LABEL[p.muscle]})</option>`).join('');
+
+      const muscleSel = document.getElementById('muscleSelect');
+      muscleSel.innerHTML = Object.entries(MUSCLE_LABEL).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+
+      presetSel.addEventListener('change', () => {
+        if (presetSel.value === 'custom') return;
+        const p = PRESETS[presetSel.value];
+        document.getElementById('customName').value = p.name;
+        muscleSel.value = p.muscle;
+        if (p.videoUrl) {
+          document.getElementById('videoUrlInput').value = p.videoUrl;
+        }
+      });
+    }
+
+    document.getElementById('addForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('customName').value.trim();
+      if (!name) return;
+
+      const muscle = document.getElementById('muscleSelect').value;
+      const sets = Math.max(1, parseInt(document.getElementById('setsInput').value) || 1);
+      const reps = Math.max(1, parseInt(document.getElementById('repsInput').value) || 1);
+      const restSetVal = document.getElementById('restSetInput').value.trim();
+      const restExVal = document.getElementById('restExInput').value.trim();
+      const videoUrl = document.getElementById('videoUrlInput').value.trim();
+
+      const restSet = restSetVal !== '' ? Math.max(0, parseInt(restSetVal)) : null;
+      const restEx = restExVal !== '' ? Math.max(0, parseInt(restExVal)) : null;
+
+      if (editingExerciseId) {
+        const idx = state.days[selectedDay].findIndex(e => e.id === editingExerciseId);
+        if (idx !== -1) {
+          state.days[selectedDay][idx] = {
+            ...state.days[selectedDay][idx],
+            name, muscle, sets, reps, restSet, restEx, videoUrl
+          };
+          showToast('บันทึกการแก้ไขเรียบร้อย');
+        }
+      } else {
+        const newEx = {
+          id: Date.now(),
+          name, muscle, sets, reps, restSet, restEx, videoUrl
+        };
+        state.days[selectedDay].push(newEx);
+        showToast('เพิ่มท่าลงในตารางแล้ว');
+      }
+
+      save();
+      renderExerciseList();
+      resetAddForm();
+    });
+
+    // ---- Workout View ----
+    let run = null;
+    let timerId = null;
+
+    function renderWorkoutDayTabs() {
+      const wrap = document.getElementById('workoutDayTabs'); wrap.innerHTML = '';
+      DAY_ORDER.forEach(d => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'day-tab' + (d === selectedWorkoutDay ? ' active' : '');
+        b.innerHTML = `<span>${DAY_LABEL[d]}</span>${d === todayKey ? '<span class="today-dot" title="วันนี้"></span>' : ''}`;
+        b.addEventListener('click', () => {
+          selectedWorkoutDay = d;
+          renderWorkoutDayTabs();
+          renderWorkoutIdle();
+        });
+        wrap.appendChild(b);
+      });
+    }
+
+    function renderWorkoutIdle() {
+      document.getElementById('workoutIdle').hidden = false;
+      document.getElementById('workoutRun').hidden = true;
+      document.getElementById('workoutDone').hidden = true;
+
+      document.getElementById('todayLabel').textContent = 'วันนี้คือวัน' + DAY_LABEL[todayKey];
+      const list = state.days[selectedWorkoutDay] || [];
+      const prev = document.getElementById('todayPreview');
+      const startBtn = document.getElementById('startBtn');
+      const dayText = selectedWorkoutDay === todayKey ? 'วันนี้' : 'วัน' + DAY_LABEL[selectedWorkoutDay];
+
+      if (!list.length) {
+        prev.innerHTML = `<div class="empty-note">ยังไม่ได้ตั้งตารางสำหรับ${dayText}<br><span style="font-size:12px;color:var(--muted)">ไปที่แท็บ "ตาราง" เพื่อเพิ่มท่าออกกำลังกาย</span></div>`;
+        startBtn.disabled = true;
+        startBtn.style.opacity = .4;
+      } else {
+        startBtn.disabled = false;
+        startBtn.style.opacity = 1;
+
+        prev.innerHTML = '';
+        list.forEach((ex, index) => {
+          const card = document.createElement('div');
+          const isExpanded = expandedPreviewIds.has(ex.id);
+          card.className = 'preview-card' + (isExpanded ? ' expanded' : '');
+          card.id = `preview-card-${ex.id}`;
+
+          const restSet = ex.restSet ?? state.master.restSet;
+          const restEx = ex.restEx ?? state.master.restEx;
+          const videoId = extractYouTubeId(ex.videoUrl);
+          const embedUrl = getYouTubeEmbedUrl(ex.videoUrl);
+
+          card.innerHTML = `
+            <div class="preview-header" role="button" tabindex="0" aria-expanded="${isExpanded}">
+              <div class="preview-left">
+                <div class="preview-title-row">
+                  <span class="badge">${MUSCLE_LABEL[ex.muscle] || ex.muscle}</span>
+                  <span class="preview-name">${index + 1}. ${escapeHtml(ex.name)}</span>
+                  ${embedUrl ? `<span class="badge badge-video"><span class="badge-icon">${ICONS.play}</span> มีคลิปสอน</span>` : ''}
+                </div>
+                <div class="preview-summary">${ex.sets} เซ็ท × ${ex.reps} ครั้ง • พักเซ็ท ${restSet}วิ</div>
+              </div>
+              <div class="preview-right">
+                <div class="preview-chevron">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="preview-body">
+              <div class="preview-content">
+                <div class="detail-chips">
+                  <div class="chip">
+                    <div class="chip-label">${ICONS.target} กล้ามเนื้อมัดหลัก</div>
+                    <div class="chip-value">${MUSCLE_LABEL[ex.muscle] || ex.muscle}</div>
+                  </div>
+                  <div class="chip">
+                    <div class="chip-label">${ICONS.clock} พักระหว่างเซ็ท</div>
+                    <div class="chip-value">${restSet} วินาที</div>
+                  </div>
+                  <div class="chip">
+                    <div class="chip-label">${ICONS.repeat} พักเปลี่ยนท่า</div>
+                    <div class="chip-value">${restEx} วินาที</div>
+                  </div>
+                  <div class="chip">
+                    <div class="chip-label">${ICONS.hash} จำนวนครั้ง</div>
+                    <div class="chip-value">${ex.sets} เซ็ท × ${ex.reps} ครั้ง</div>
+                  </div>
+                </div>
+
+                <div class="video-section">
+                  <div class="video-label">
+                    ${ICONS.youtube}
+                    วิธีทำท่านี้ / วิดีโอสาธิต:
+                  </div>
+
+                  ${embedUrl ? `
+                    <div class="video-container">
+                      <iframe
+                        src="${embedUrl}"
+                        title="วิธีทำ ${escapeHtml(ex.name)}"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="video-actions">
+                      <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer" class="yt-fallback-btn">
+                        ${ICONS.youtube}
+                        เปิดดูคลิปใน YouTube (แท็บใหม่)
+                      </a>
+                    </div>
+                  ` : `
+                    <div class="no-video-note">
+                      ยังไม่ได้ใส่ลิงก์คลิป YouTube สำหรับท่านี้<br>
+                      <span style="font-size:11.5px;color:var(--muted)">สามารถใส่ลิงก์ได้ในแท็บ "ตาราง" เพื่อดูคลิปสอนได้ทันที</span>
+                    </div>
+                  `}
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Accordion click toggle
+          const header = card.querySelector('.preview-header');
+          const toggleAccordion = () => {
+            const currentlyExpanded = card.classList.contains('expanded');
+            if (currentlyExpanded) {
+              card.classList.remove('expanded');
+              expandedPreviewIds.delete(ex.id);
+              header.setAttribute('aria-expanded', 'false');
+              const iframe = card.querySelector('iframe');
+              if (iframe && embedUrl) {
+                iframe.src = embedUrl;
+              }
+            } else {
+              card.classList.add('expanded');
+              expandedPreviewIds.add(ex.id);
+              header.setAttribute('aria-expanded', 'true');
+            }
+          };
+
+          header.addEventListener('click', toggleAccordion);
+          header.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleAccordion();
+            }
+          });
+
+          prev.appendChild(card);
+        });
+      }
+
+      startBtn.textContent = selectedWorkoutDay === todayKey ? 'เริ่มออกกำลังกาย' : 'เริ่มออกกำลังกาย (วัน' + DAY_LABEL[selectedWorkoutDay] + ')';
+    }
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      const list = state.days[selectedWorkoutDay] || [];
+      if (!list.length) return;
+      run = { list, exIdx: 0, setIdx: 1 };
+      document.getElementById('workoutIdle').hidden = true;
+      document.getElementById('workoutRun').hidden = false;
+      showExercisePhase();
+    });
+
+    function showExercisePhase() {
+      document.getElementById('exerciseCard').hidden = false;
+      document.getElementById('restOverlay').hidden = true;
+      const cur = run.list[run.exIdx];
+
+      document.getElementById('progressLabel').textContent = 'ท่าที่ ' + (run.exIdx + 1) + ' จาก ' + run.list.length;
+      document.getElementById('exName').textContent = cur.name;
+      document.getElementById('setLabel').textContent = 'เซ็ท ' + run.setIdx + '/' + cur.sets + ' • ' + cur.reps + ' ครั้ง';
+      document.getElementById('muscleLabel').textContent = 'กล้ามเนื้อมัดหลัก: ' + (MUSCLE_LABEL[cur.muscle] || cur.muscle);
+
+      // highlight muscle diagram zone
+      document.querySelectorAll('.zone').forEach(z => z.classList.toggle('active', z.dataset.muscle === cur.muscle));
+
+      // Handle in-run video preview drawer
+      const runVideoContainer = document.getElementById('runVideoContainer');
+      const runVideoWrapper = document.getElementById('runVideoWrapper');
+      const runVideoDrawer = document.getElementById('runVideoDrawer');
+      const runVideoToggle = document.getElementById('runVideoToggle');
+      const runVideoToggleIcon = document.getElementById('runVideoToggleIcon');
+      const runVideoToggleText = document.getElementById('runVideoToggleText');
+      const runVideoActions = document.getElementById('runVideoActions');
+      const videoId = extractYouTubeId(cur.videoUrl);
+      const embedUrl = getYouTubeEmbedUrl(cur.videoUrl);
+
+      runVideoDrawer.classList.remove('open');
+      if (embedUrl) {
+        runVideoContainer.style.display = 'block';
+        runVideoWrapper.innerHTML = `
+          <iframe
+            src="${embedUrl}"
+            title="วิธีทำ ${escapeHtml(cur.name)}"
+            referrerpolicy="strict-origin-when-cross-origin"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        `;
+        runVideoActions.innerHTML = `
+          <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer" class="yt-fallback-btn">
+            ${ICONS.youtube}
+            เปิดดูคลิปใน YouTube (แท็บใหม่)
+          </a>
+        `;
+
+        runVideoToggleIcon.innerHTML = ICONS.play;
+        runVideoToggleText.textContent = 'ดูคลิปวิธีทำท่านี้';
+
+        runVideoToggle.onclick = () => {
+          runVideoDrawer.classList.toggle('open');
+          const isOpen = runVideoDrawer.classList.contains('open');
+          runVideoToggleIcon.innerHTML = isOpen ? ICONS.close : ICONS.play;
+          runVideoToggleText.textContent = isOpen ? 'ปิดคลิปวิธีทำ' : 'ดูคลิปวิธีทำท่านี้';
+        };
+      } else {
+        runVideoContainer.style.display = 'none';
+        runVideoWrapper.innerHTML = '';
+        runVideoActions.innerHTML = '';
+      }
+    }
+
+    document.getElementById('completeSetBtn').addEventListener('click', () => {
+      const cur = run.list[run.exIdx];
+      if (run.setIdx < cur.sets) {
+        const dur = cur.restSet ?? state.master.restSet;
+        startRest(dur, 'พักระหว่างเซ็ท', () => {
+          run.setIdx++;
+          showExercisePhase();
+        });
+      } else if (run.exIdx < run.list.length - 1) {
+        const dur = cur.restEx ?? state.master.restEx;
+        const next = run.list[run.exIdx + 1];
+        startRest(dur, 'พักเปลี่ยนท่า • ท่าถัดไป: ' + next.name, () => {
+          run.exIdx++;
+          run.setIdx = 1;
+          showExercisePhase();
+        });
+      } else {
+        finishWorkout();
+      }
+    });
+
+    function startRest(seconds, title, onDone) {
+      document.getElementById('exerciseCard').hidden = true;
+      const overlay = document.getElementById('restOverlay'); overlay.hidden = false;
+      document.getElementById('restTitle').textContent = title;
+      let remaining = Math.max(seconds, 0);
+      const num = document.getElementById('countdownNum'); num.textContent = remaining;
+      clearInterval(timerId);
+
+      const done = () => {
+        clearInterval(timerId);
+        overlay.hidden = true;
+        document.getElementById('exerciseCard').hidden = false;
+        onDone();
+      };
+
+      if (remaining <= 0) { done(); return; }
+      timerId = setInterval(() => {
+        remaining--; num.textContent = remaining;
+        if (remaining <= 0) done();
+      }, 1000);
+      document.getElementById('skipRestBtn').onclick = done;
+    }
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      if (confirm('ต้องการหยุดการออกกำลังกายใช่หรือไม่?')) {
+        clearInterval(timerId);
+        run = null;
+        renderWorkoutIdle();
+      }
+    });
+
+    function finishWorkout() {
+      clearInterval(timerId);
+      document.getElementById('workoutRun').hidden = true;
+      document.getElementById('workoutDone').hidden = false;
+      const totalSets = run.list.reduce((s, e) => s + e.sets, 0);
+      document.getElementById('doneSummary').textContent =
+        `เสร็จสิ้นทั้งหมด ${run.list.length} ท่า • รวม ${totalSets} เซ็ท`;
+    }
+
+    document.getElementById('restartBtn').addEventListener('click', renderWorkoutIdle);
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      })[m]);
+    }
+
+    // ---- Backup & Restore Logic ----
+    const backupModal = document.getElementById('backupModal');
+    const closeBackupModalBtn = document.getElementById('closeBackupModalBtn');
+    const modalDoneBtn = document.getElementById('modalDoneBtn');
+    const modalCodeTextarea = document.getElementById('modalCodeTextarea');
+
+    function openBackupModal(focusPaste = false) {
+      backupModal.classList.add('open');
+      if (focusPaste) {
+        modalCodeTextarea.value = '';
+        setTimeout(() => modalCodeTextarea.focus(), 150);
+      }
+    }
+
+    function closeBackupModal() {
+      backupModal.classList.remove('open');
+      modalCodeTextarea.value = '';
+    }
+
+    closeBackupModalBtn.addEventListener('click', closeBackupModal);
+    modalDoneBtn.addEventListener('click', closeBackupModal);
+    backupModal.addEventListener('click', (e) => {
+      if (e.target === backupModal) closeBackupModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && backupModal.classList.contains('open')) {
+        closeBackupModal();
+      }
+    });
+
+    function exportBackupFile() {
+      const data = {
+        app: 'FitPlan',
+        version: '2.0',
+        exportedAt: new Date().toISOString(),
+        master: state.master,
+        days: state.days
+      };
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const now = new Date();
+      const dateStr = now.getFullYear() + '-'
+        + String(now.getMonth() + 1).padStart(2, '0') + '-'
+        + String(now.getDate()).padStart(2, '0');
+      const filename = `fitplan_backup_${dateStr}.json`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('ดาวน์โหลดไฟล์สำรองเรียบร้อย');
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', exportBackupFile);
+    document.getElementById('modalExportBtn').addEventListener('click', exportBackupFile);
+
+    const importFileInput = document.getElementById('importFileInput');
+    const triggerFileImport = () => {
+      importFileInput.value = '';
+      importFileInput.click();
+    };
+
+    document.getElementById('importBtn').addEventListener('click', () => openBackupModal(false));
+    document.getElementById('modalImportFileBtn').addEventListener('click', triggerFileImport);
+
+    importFileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          applyBackupData(parsed, 'ไฟล์สำรอง (' + file.name + ')');
+        } catch (err) {
+          alert('ไม่สามารถอ่านไฟล์สำรองได้: ' + (err.message || 'รูปแบบไฟล์ไม่ถูกต้อง'));
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById('copyJsonBtn').addEventListener('click', async () => {
+      const data = {
+        app: 'FitPlan',
+        version: '2.0',
+        exportedAt: new Date().toISOString(),
+        master: state.master,
+        days: state.days
+      };
+      const jsonStr = JSON.stringify(data);
+      try {
+        await navigator.clipboard.writeText(jsonStr);
+        showToast('คัดลอกโค้ดตารางแล้ว ส่งใน LINE ได้เลย');
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = jsonStr;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('คัดลอกโค้ดตารางแล้ว ส่งใน LINE ได้เลย');
+      }
+    });
+
+    document.getElementById('pasteJsonBtn').addEventListener('click', () => {
+      openBackupModal(true);
+    });
+
+    document.getElementById('modalPasteClipboardBtn').addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          modalCodeTextarea.value = text.trim();
+          showToast('วางข้อความจากคลิปบอร์ดแล้ว');
+        } else {
+          modalCodeTextarea.focus();
+          showToast('ไม่พบข้อความในคลิปบอร์ด');
+        }
+      } catch (err) {
+        modalCodeTextarea.focus();
+        showToast('โปรดแตะค้างที่ช่องแล้วกดวาง (Paste)');
+      }
+    });
+
+    document.getElementById('modalApplyCodeBtn').addEventListener('click', () => {
+      const text = modalCodeTextarea.value.trim();
+      if (!text) {
+        alert('กรุณาวางข้อความโค้ดตารางก่อนกดกู้คืน');
+        modalCodeTextarea.focus();
+        return;
+      }
+      try {
+        const parsed = JSON.parse(text);
+        applyBackupData(parsed, 'ข้อความโค้ด');
+      } catch (err) {
+        alert('รูปแบบโค้ดไม่ถูกต้อง: ' + (err.message || 'โปรดตรวจสอบข้อความที่วาง'));
+      }
+    });
+
+    document.getElementById('modalResetDefaultBtn').addEventListener('click', () => {
+      if (confirm('ต้องการคืนค่าเป็นตารางออกกำลังกายเริ่มต้นใช่หรือไม่?\n(ตารางที่ตั้งไว้ปัจจุบันจะถูกแทนที่ด้วยตารางตัวอย่างเริ่มต้น)')) {
+        state = defaultState();
+        save();
+        renderMaster();
+        renderExerciseList();
+        renderWorkoutIdle();
+        closeBackupModal();
+        showToast('คืนค่าตารางเริ่มต้นสำเร็จ');
+      }
+    });
+
+    function applyBackupData(parsed, sourceName) {
+      if (!parsed || !parsed.days || typeof parsed.days !== 'object') {
+        alert('ไม่พบโครงสร้างตารางออกกำลังกายในข้อมูลชุดนี้');
+        return false;
+      }
+      DAY_ORDER.forEach(d => {
+        if (!Array.isArray(parsed.days[d])) parsed.days[d] = [];
+      });
+      const masterRestSet = parsed.master && typeof parsed.master.restSet === 'number' ? parsed.master.restSet : 60;
+      const masterRestEx = parsed.master && typeof parsed.master.restEx === 'number' ? parsed.master.restEx : 90;
+
+      const activeDays = DAY_ORDER.filter(d => parsed.days[d].length > 0);
+      const totalExercises = activeDays.reduce((count, d) => count + parsed.days[d].length, 0);
+      const daysSummary = activeDays.map(d => `${DAY_LABEL[d]}: ${parsed.days[d].length} ท่า`).join(', ');
+
+      const confirmMsg = `พบข้อมูลจาก ${sourceName}\n`
+        + `จำนวนท่าทั้งหมด: ${totalExercises} ท่า\n`
+        + (daysSummary ? `(${daysSummary})\n\n` : '\n')
+        + `ต้องการกู้คืนเพื่อแทนที่ตารางปัจจุบันใช่หรือไม่?`;
+
+      if (confirm(confirmMsg)) {
+        state = {
+          master: { restSet: masterRestSet, restEx: masterRestEx },
+          days: parsed.days
+        };
+        save();
+        renderMaster();
+        renderExerciseList();
+        renderWorkoutIdle();
+        closeBackupModal();
+        showToast('กู้คืนตารางออกกำลังกายสำเร็จ');
+        return true;
+      }
+      return false;
+    }
+
+    // Initialization
+    renderMaster();
+    renderDayTabs();
+    renderExerciseList();
+    initAddForm();
+    renderWorkoutDayTabs();
+  </script>
+</body>
+</html>
